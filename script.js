@@ -6,6 +6,16 @@ const navLinks = document.querySelector(".nav-links");
 const typeTarget = document.querySelector(".typing-text");
 const magneticButtons = document.querySelectorAll(".magnetic-btn");
 
+const revealIfVisible = (el) => {
+  const rect = el.getBoundingClientRect();
+  const inView = rect.top < window.innerHeight * 0.92 && rect.bottom > 0;
+  if (inView) {
+    el.classList.add("revealed");
+    return true;
+  }
+  return false;
+};
+
 const observer = new IntersectionObserver(
   (entries) => {
     entries.forEach((entry) => {
@@ -15,10 +25,19 @@ const observer = new IntersectionObserver(
       }
     });
   },
-  { threshold: 0.2 }
+  { threshold: 0.08, rootMargin: "0px 0px -40px 0px" }
 );
 
-revealElements.forEach((el) => observer.observe(el));
+revealElements.forEach((el) => {
+  revealIfVisible(el);
+  if (!el.classList.contains("revealed")) {
+    observer.observe(el);
+  }
+});
+
+window.addEventListener("load", () => {
+  revealElements.forEach((el) => revealIfVisible(el));
+});
 
 document.addEventListener("mousemove", (event) => {
   if (!cursorGlow) return;
